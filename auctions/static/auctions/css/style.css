@@ -7799,4 +7799,7 @@ a.text-dark:hover, a.text-dark:focus {
   .navbar-brand img {
     margin-right: 10px; }
 
+.btn-block {
+  border-width: 2px; }
+
 /*# sourceMappingURL=style.css.map */

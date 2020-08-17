@@ -3,7 +3,7 @@ from django.utils.safestring import mark_safe
 from .models import User, Auction, Category, Comment, Bid
 
 class CreateForm(forms.ModelForm):
-    title = forms.CharField(label=mark_safe("<strong>Title</strong>"),
+    title = forms.CharField(label=mark_safe("<strong>Titre de votre enchère</strong>"),
                             min_length=1,
                             max_length=100,
                             widget=forms.TextInput
@@ -11,22 +11,22 @@ class CreateForm(forms.ModelForm):
 				            'placeholder':'Titre'
                             }))
 
-    image = forms.URLField(label=mark_safe("<strong>Image URL</strong>"),
+    image = forms.URLField(label=mark_safe("<strong>Lien vers une image</strong>"),
                             max_length=1000,
                             widget=forms.URLInput
                             (attrs={'class':'form-control',
-                            'placeholder':'Lien vers une image'
+                            'placeholder':'URL'
                             }))
 
-    content = forms.CharField(label=mark_safe("<strong>Content</strong>"),
+    content = forms.CharField(label=mark_safe("<strong>Description de votre enchère</strong>"),
                             min_length=20,
                             max_length=1000,
                             widget=forms.Textarea
                             (attrs={'class':'form-control',
-				            'placeholder':'Description de votre enchère'
+				            'placeholder':'Description'
                             }))
 
-    starting_price = forms.DecimalField(label=mark_safe("<strong>Starting price (USD)</strong>"),
+    starting_price = forms.DecimalField(label=mark_safe("<strong>Prix de départ (€)</strong>"),
                             min_value=0.01,
                             widget=forms.NumberInput
                             (attrs={'class':'form-control',
@@ -34,7 +34,7 @@ class CreateForm(forms.ModelForm):
                             }))
 
     category = forms.ModelChoiceField(queryset=Category.objects.all(),
-                            label=mark_safe("<strong>Category</strong>"),
+                            label=mark_safe("<strong>Catégorie</strong>"),
                             required=True,
                             widget= forms.Select
                             (attrs={'class':'form-control'
