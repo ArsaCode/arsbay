@@ -1,0 +1,35 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    Inscription
+{% endblock %}
+
+{% block cardtitle %}
+    Rejoignez-nous via ce formulaire
+{% endblock %}
+
+{% block body %}
+    <form action="{% url 'auctions:register' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label style="font-weight: bold;" for="username">Nom d'utilisateur</label>
+            <input class="form-control" autofocus type="text" name="username" placeholder="Nom d'utilisateur" id="username">
+        </div>
+        <div class="form-group">
+            <label style="font-weight: bold;" for="email">E-mail</label>
+            <input class="form-control" type="email" name="email" placeholder="Adresse e-mail" id="email">
+        </div>
+        <div class="form-group">
+            <label style="font-weight: bold;" for="password">Mot de passe</label>
+            <input class="form-control" type="password" name="password" placeholder="Mot de passe" id="password">
+        </div>
+        <div class="form-group">
+            <label style="font-weight: bold;" for="confirmpassword">Confirmez le mot de passe</label>
+            <input class="form-control" type="password" name="confirmation" placeholder="Confirmation du mot de passe" id="confirmpassword">
+        </div>
+        <input class="btn btn-primary" type="submit" value="S'inscrire">
+    </form>
+
+    Vous avez déjà un compte? <a href="{% url 'auctions:login' %}">Connectez-vous ici.</a>
+
+{% endblock %}

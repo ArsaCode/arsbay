@@ -1,0 +1,73 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    Accueil
+{% endblock %}
+
+{% block cardtitle %}
+    Bienvenue sur ArsBay !
+{% endblock %}
+
+{% block body %}
+  <div class="card">
+    <div class="card-header text-white bg-primary">
+      Enchères actives
+    </div>
+    <div class="card-body">
+      <h5 class="card-title text-center">Retrouvez ci-desous la liste des enchères actives (depuis la plus récente) :</h5>
+        <div class="card-text">
+          {% for auction in auctions %}
+            <div class="card mb-2">
+              <a href="{% url 'auctions:list' auction.id %}">
+              <img src="{{ auction.image }}" class="card-img-top" alt="Auction {{ auction.id }} image">
+              </a>
+              <div class="card-body">
+                <a href="{% url 'auctions:list' auction.id %}">
+                <h5 class="card-title">{{ auction.title }}</h5>
+                </a>
+                <hr>
+                <div class="text-center">
+                  Statut de l'enchère : {% if auction.active %} <div class="mb-1" style="font-weight: bold; color: green;">Active</div>{% else %}<div class="mb-1" style="font-weight: bold; color: red;">Terminée</div>{% endif %}
+                </div>
+                <div class="card-text">
+                  {{ auction.content }}
+                  <br>
+                  Prix de départ : <strong>{{ auction.starting_price }}€.</strong>
+                  <small class="float-right">
+                  Catégorie : <strong>{{ auction.category }}</strong>
+                  </small>
+                  <hr>
+                  <div class="text-center">
+                    {% if user.is_authenticated %}
+                      <form action="{% url 'auctions:list' auction.id %}">
+                      <input class="btn btn-primary mb-2" type="submit" value="Voir l'enchère">
+                      </form>
+                      {% if auction.active %}
+                        <form action="{% url 'auctions:watchlist_add' auction.id %}" method="POST">
+                        {% csrf_token %}
+                        <input class="btn btn-success mb-1" type="submit" value="Ajouter aux favoris">
+                        </form>
+                        <form action="{% url 'auctions:watchlist_remove' auction.id %}" method="POST">
+                        {% csrf_token %}
+                        <input class="btn btn-danger mb-2" type="submit" value="Supprimer des favoris">
+                        </form>
+                      {% endif %}
+                    {% else %}
+                      <div class="text-center">
+                      <form action="{% url 'auctions:list' auction.id %}">
+                      <input class="btn btn-primary mb-2" type="submit" value="Connectez-vous ou inscrivez-vous pour y participer">
+                      </form>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <small class="text-muted">Postée par <strong>{{ auction.author }}</strong> le {{ auction.date }}</small>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+    </div>
+  </div>
+{% endblock %}

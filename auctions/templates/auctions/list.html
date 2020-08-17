@@ -1,0 +1,110 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    {{ auction.title }}
+{% endblock %}
+
+{% block cardtitle %}
+    {{ auction.title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header text-white bg-primary">
+            Détails de cette enchère
+        </div>
+        <div class="card-body">
+            <h5 class="card-title text-center">Produit : {{ auction.title }} | Vendeur : <strong>{{ auction.author }}</strong></h5>
+            {% if request.user.id == auction.author_id and auction.active %}
+                <form action="{% url 'auctions:close' auction.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="text-center">
+                        <input class="btn btn-danger btn-lg" type="submit" value="Fermer votre enchère">
+                    </div>
+                </form>
+            {% endif %}
+            <hr>
+            <div class="text-center">
+                Statut de l'enchère : {% if auction.active %} <div class="mb-1" style="font-weight: bold; color: green;">Active</div>{% else %}<div class="mb-1" style="font-weight: bold; color: red;">Fermée</div>{% endif %}
+                {% if highestbid and auction.active == False %}Gagnant de l'enchère :<div class="mb-1" style="font-weight: bold; color: green;">{{ highestbid.author }}</div>Prix final : <div class="mb-1" style="font-weight: bold; color: green;">{{ highestbid.amount }}€</div>{% elif highestbid is None and auction.active == False %}
+                <div class="mb-1" style="font-weight: bold; color: red;">Aucun gagnant</div>le vendeur a fermé l'offre avant la première enchère.{% endif %}
+            </div>
+            <div class="card-text">
+                <div class="card mb-2">
+                  <img src="{{ auction.image }}" class="card-img-top" alt="Auction {{ auction.id }} image">
+                  <div class="card-body">
+                    <h5 class="card-title text-center">{{ auction.title }}</h5>
+                    <hr>
+                    <p class="card-text">{{ auction.content }}</p>
+                    <br>
+                    Prix de départ : <strong>{{ auction.starting_price }}€</strong>
+                    <br>
+                    Prix {% if auction.active %}actuel{% else %}final{% endif %} : {% if highestbid %}<strong style="color: green;">{{ highestbid.amount }}€</strong> - plus haute enchère faite par <strong>{{ highestbid.author }}</strong>.{% else %} Cette offre n'a pas encore reçu d'enchères.{% endif %}
+                    <small class="float-right">
+                        Catégorie : <strong>{{ auction.category }}</strong>
+                    </small>
+                    {% if request.user.id != auction.author_id and auction.active %}
+                        <hr>
+                        <div class="text-center">
+                            <form action="{% url 'auctions:bid' auction.id %}" method="POST">
+                                {% csrf_token %}
+                                {{ bidform.amount }}
+                            <input class="btn btn-success mb-2 mt-2" type="submit" value="Enchérir">
+                            </form>
+                        </div>
+                    {% endif %}
+                    <div class="text-center">
+                        <form action="{% url 'auctions:watchlist_add' auction.id %}" method="POST">
+                            {% csrf_token %}
+                            <input class="btn btn-success mb-1" type="submit" value="Ajouter aux favoris">
+                        </form>
+                        <form action="{% url 'auctions:watchlist_remove' auction.id %}" method="POST">
+                            {% csrf_token %}
+                            <input class="btn btn-danger" type="submit" value="Supprimer des favoris">
+                        </form>
+                    </div>
+                  </div>
+                  <div class="card-footer">
+                    <small class="text-muted">Postée par <strong>{{ auction.author }}</strong> le {{ auction.date }}</small>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header text-white bg-primary" style="text-align: right;">
+            Commentaires
+        </div>
+        <div class="card-body">
+            {% if comments %}
+                <h5 class="card-title">Commentaires postés sur cette enchère :</h5>
+                {% for comment in comments %}
+                    <div class="card-text">
+                        <div class="card mb-2">
+                        <div class="card-body">
+                            <p class="card-text">{{ comment.content }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Posté par <strong>{{ comment.author }}</strong> le {{ comment.date }}</small>
+                        </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h5 class="card-title">Il n'y a pas encore de commentaire sur cette enchère.</h5>   
+            {% endif %}
+        </div>
+        {% if auction.active %}
+        <div class="form-group">
+            <form action="{% url 'auctions:comment' auction.id %}" method="POST">
+            {% csrf_token %}
+            {{ commentform.content }}
+            <div class="text-center">
+                <input class="btn btn-primary mb-2" type="submit" value="Ajouter un commentaire">
+            </div>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

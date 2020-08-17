@@ -1,0 +1,19 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    Nouvelle enchère
+{% endblock %}
+
+{% block cardtitle %}
+    Création d'une nouvelle enchère
+{% endblock %}
+
+{% block body %}
+    <form action="{% url 'auctions:create' %}" method="post">
+    {% csrf_token %}
+    {{ createform.as_p }}
+    <div class="text-center">
+        <input class="btn btn-primary mt-2" type="submit" value="Créer">
+    </div>
+    </form>
+{% endblock %}

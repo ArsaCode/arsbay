@@ -1,0 +1,27 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    Connexion
+{% endblock %}
+
+{% block cardtitle %}
+    Connectez-vous avec vos identifiants
+{% endblock %}
+
+{% block body %}
+    <form action="{% url 'auctions:login' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label style="font-weight: bold;" for="username">Nom d'utilisateur</label>
+            <input autofocus class="form-control" type="text" name="username" placeholder="Nom d'utilisateur" id="username">
+        </div>
+        <div class="form-group">
+            <label style="font-weight: bold;" for="password">Mot de passe</label>
+            <input class="form-control" type="password" name="password" placeholder="Mot de passe" id="password">
+        </div>
+        <input class="btn btn-primary" type="submit" value="Login">
+    </form>
+
+    Vous n'avez pas encore de compte ? <a href="{% url 'auctions:register' %}">Inscrivez-vous ici.</a>
+
+{% endblock %}
