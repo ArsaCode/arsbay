@@ -89,7 +89,8 @@ def create(request):
 
     else:
         return render(request, "auctions/create.html", {
-        "createform": CreateForm()
+        "createform": CreateForm(),
+        "searchform": SearchForm()
         })
 
 @login_required(redirect_field_name='')
@@ -115,11 +116,17 @@ def watchlist_add(request, list_id):
             messages.add_message(request, messages.WARNING, 'This auction is already in your watchlist.')
             return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
         else:
-            usrlist = Watchlist.objects.get(id=request.user.id)
-            usrlist.product.add(auction)
-            usrlist.save()
-            messages.add_message(request, messages.SUCCESS, 'Successfully added to your watchlist.')
-            return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
+            try:
+                usrlist = Watchlist.objects.get(id=request.user.id)
+                usrlist.product.add(auction)
+                usrlist.save()
+                messages.add_message(request, messages.SUCCESS, 'Successfully added to your watchlist.')
+                return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
+            except ObjectDoesNotExist:
+                usrlist = Watchlist(id=request.user.id, owner_id=request.user.id, product=auction)
+                usrlist.save()
+                messages.add_message(request, messages.SUCCESS, 'Successfully added to your watchlist.')
+                return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
         
 
 @login_required(redirect_field_name='')
@@ -131,11 +138,15 @@ def watchlist_remove(request, list_id):
             messages.add_message(request, messages.WARNING, 'This auction is not in your watchlist.')
             return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
         else:
-            usrlist = Watchlist.objects.get(id=request.user.id)
-            usrlist.product.remove(auction)
-            usrlist.save()
-            messages.add_message(request, messages.ERROR, 'Successfully removed from your watchlist.')
-            return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
+            try:
+                usrlist = Watchlist.objects.get(id=request.user.id)
+                usrlist.product.remove(auction)
+                usrlist.save()
+                messages.add_message(request, messages.ERROR, 'Successfully removed from your watchlist.')
+                return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
+            except ObjectDoesNotExist:
+                messages.add_message(request, messages.WARNING, 'This auction is not in your watchlist.')
+                return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
 
 @login_required(redirect_field_name='')
 def comment(request, list_id):
