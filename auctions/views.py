@@ -113,19 +113,19 @@ def watchlist_add(request, list_id):
         auction = Auction.objects.get(pk=list_id)
         check = Watchlist.objects.filter(id=request.user.id, product=list_id).first()
         if check is not None:
-            messages.add_message(request, messages.WARNING, 'This auction is already in your watchlist.')
+            messages.add_message(request, messages.WARNING, 'Cette enchère est déjà dans vos favoris.')
             return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
         else:
             try:
                 usrlist = Watchlist.objects.get(id=request.user.id)
                 usrlist.product.add(auction)
                 usrlist.save()
-                messages.add_message(request, messages.SUCCESS, 'Successfully added to your watchlist.')
+                messages.add_message(request, messages.SUCCESS, 'Cette enchère a été ajoutée à vos favoris.')
                 return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
             except ObjectDoesNotExist:
                 usrlist = Watchlist(id=request.user.id, owner_id=request.user.id, product=auction)
                 usrlist.save()
-                messages.add_message(request, messages.SUCCESS, 'Successfully added to your watchlist.')
+                messages.add_message(request, messages.SUCCESS, 'Cette enchère a été ajoutée à vos favoris.')
                 return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
         
 
@@ -135,17 +135,17 @@ def watchlist_remove(request, list_id):
         auction = Auction.objects.get(pk=list_id)
         check = Watchlist.objects.filter(id=request.user.id, product=list_id).first()
         if check is None:
-            messages.add_message(request, messages.WARNING, 'This auction is not in your watchlist.')
+            messages.add_message(request, messages.WARNING, "Cette enchère n'est pas dans vos favoris.")
             return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
         else:
             try:
                 usrlist = Watchlist.objects.get(id=request.user.id)
                 usrlist.product.remove(auction)
                 usrlist.save()
-                messages.add_message(request, messages.ERROR, 'Successfully removed from your watchlist.')
+                messages.add_message(request, messages.ERROR, 'Cette enchère a bien été retirée de vos favoris.')
                 return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
             except ObjectDoesNotExist:
-                messages.add_message(request, messages.WARNING, 'This auction is not in your watchlist.')
+                messages.add_message(request, messages.WARNING, "Cette enchère n'est pas dans vos favoris.")
                 return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
 
 @login_required(redirect_field_name='')
