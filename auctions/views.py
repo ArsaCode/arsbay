@@ -123,8 +123,9 @@ def watchlist_add(request, list_id):
                 messages.add_message(request, messages.SUCCESS, 'Cette enchère a été ajoutée à vos favoris.')
                 return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
             except ObjectDoesNotExist:
-                usrlist = Watchlist(id=request.user.id, owner_id=request.user.id, product=auction)
+                usrlist = Watchlist(id=request.user.id, owner_id=request.user.id)
                 usrlist.save()
+                usrlist.product.add(auction)
                 messages.add_message(request, messages.SUCCESS, 'Cette enchère a été ajoutée à vos favoris.')
                 return HttpResponseRedirect(reverse("auctions:list", args=(list_id,)))
         
